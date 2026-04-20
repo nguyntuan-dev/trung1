@@ -16,7 +16,7 @@ load_dotenv()
 
 from cedict_parser import cedict
 from database import engine, Base, get_db
-from import models
+import models
 from sqlalchemy import func
 
 # Tạo các bảng trong database (nếu chưa có)

@@ -1,27 +1,31 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
 
-# Tải biến môi trường từ file .env (nếu có)
-load_dotenv()
+# Lấy biến môi trường từ Railway
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# Lấy URL từ biến môi trường DATABASE_URL
-# Nếu không có, mặc định dùng URL dev (PostgreSQL local)
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+# Debug để kiểm tra (có thể xoá sau)
+print("DEBUG DATABASE_URL =", DATABASE_URL)
 
-if not SQLALCHEMY_DATABASE_URL:
+if not DATABASE_URL:
     raise ValueError("DATABASE_URL not found!")
-# Fix cho một số host như Heroku cung cấp URL bắt đầu bằng postgres://
-if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
-    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# Fix cho Railway (postgres:// -> postgresql://)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Tạo engine
+engine = create_engine(DATABASE_URL)
+
+# Session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Base
 Base = declarative_base()
 
-# Dependency
+
+# Dependency (nếu dùng FastAPI)
 def get_db():
     db = SessionLocal()
     try:

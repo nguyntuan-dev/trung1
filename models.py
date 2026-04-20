@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from .database import Base
+from database import Base
 
 # Dưới đây là các bảng ví dụ sẽ được tạo tự động trong PostgreSQL
 class User(Base):

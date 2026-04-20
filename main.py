@@ -3,12 +3,12 @@ import os
 from dotenv import load_dotenv
 
 # ✅ PHẢI gọi load_dotenv() TRƯỚC KHI import database
-# vì database.py đọc DATABASE_URL ngay lúc được import
 load_dotenv()
 
 from fastapi import FastAPI, Query, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
@@ -64,16 +64,20 @@ async def security_checks(request: Request, call_next):
             return HTTPException(status_code=403, detail="Bots not allowed").default_response
 
     response = await call_next(request)
-
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     return response
 
 
+# ✅ Serve frontend tại route "/"
 @app.get("/")
 def root():
-    return {"name": "汉语Go API", "status": "online"}
+    return FileResponse("static/index.html")
+
+
+# ✅ Mount static files (CSS, JS, ảnh...)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/api/search")
@@ -84,7 +88,6 @@ def search_words(
     limit: int = Query(40, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
-    """Search across the full CC-CEDICT dictionary."""
     results = cedict.search(q, limit=limit, offset=offset)
     return {"query": q, "count": len(results), "results": results}
 
@@ -95,7 +98,6 @@ def get_hsk_words(
     limit: int = Query(50, ge=1, le=300),
     offset: int = Query(0, ge=0),
 ):
-    """Get words for a specific HSK level (1-6)."""
     if level < 1 or level > 6:
         return {"error": "Level must be 1-6"}
     return cedict.get_hsk(level, limit=limit, offset=offset)
@@ -106,7 +108,6 @@ def save_word(
     word: str, pinyin: str, meaning: str, hsk_level: int = 0,
     db: Session = Depends(get_db)
 ):
-    """Save word to DB."""
     existing = db.query(models.SavedWord).filter(models.SavedWord.word == word).first()
     if existing:
         return {"msg": "Already saved", "status": "exists"}
@@ -125,13 +126,11 @@ def save_word(
 
 @app.get("/api/saved_words")
 def get_saved_words(db: Session = Depends(get_db)):
-    """Fetch all saved words from DB."""
     return db.query(models.SavedWord).order_by(models.SavedWord.id.desc()).all()
 
 
 @app.delete("/api/saved_words/{word_id}")
 def delete_saved_word(word_id: int, db: Session = Depends(get_db)):
-    """Delete a saved word by ID."""
     word = db.query(models.SavedWord).filter(models.SavedWord.id == word_id).first()
     if word:
         db.delete(word)
@@ -142,16 +141,12 @@ def delete_saved_word(word_id: int, db: Session = Depends(get_db)):
 
 @app.get("/api/hsk")
 def hsk_summary(db: Session = Depends(get_db)):
-    """Get summary of all HSK levels with actual progress from DB."""
     summary = cedict.hsk_summary()
     db_counts = db.query(models.SavedWord.hsk_level, func.count(models.SavedWord.id))\
                   .group_by(models.SavedWord.hsk_level).all()
-
     db_map = {level: count for level, count in db_counts if level > 0}
-
     for s in summary:
         s["learned"] = db_map.get(s["level"], 0)
-
     return summary
 
 
@@ -162,13 +157,11 @@ def random_words(
     level: int = Query(0, ge=0, le=6, description="HSK level (0 = all)"),
     count: int = Query(20, ge=1, le=100),
 ):
-    """Get random vocabulary words."""
     return cedict.random_words(level=level, count=count)
 
 
 @app.get("/api/lookup/{word}")
 def lookup_word(word: str):
-    """Exact lookup of a word."""
     result = cedict.lookup(word)
     if result:
         return result

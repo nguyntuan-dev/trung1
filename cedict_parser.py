@@ -11,7 +11,7 @@ import random
 import urllib.request
 from pathlib import Path
 
-from .vietnamese import get_translation, preload_hsk_words
+from vietnamese import get_translation, preload_hsk_words
 
 CEDICT_URL = "https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz"
 DATA_DIR = Path(__file__).parent.parent / "data"

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汉语Go – Học Tiếng Trung</title>
+  <meta name="description" content="Tra cứu từ vựng tiếng Trung từ từ điển CC-CEDICT, học theo chuẩn HSK 1-6.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+
+  <header id="header">
+    <div class="container header-inner">
+      <a href="#" class="logo" id="logo-home">
+        <img src="ChatGPT Image 22_18_16 20 thg 4, 2026.png" alt="Logo" class="logo-img">
+        汉语<span>Go</span>
+      </a>
+      <nav id="nav">
+        <a href="#" class="tab active" data-view="home">Trang chủ</a>
+        <a href="#" class="tab" data-view="type">Luyện gõ</a>
+        <a href="#" class="tab" data-view="learn">Học HSK</a>
+        <a href="#" class="tab" data-view="search">Tra từ điển</a>
+        <a href="#" class="tab" data-view="flashcard">Flashcard</a>
+        <a href="#" class="tab" data-view="quiz">Kiểm tra</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- HOME -->
+    <div id="view-home" class="view">
+      <section class="hero-simple">
+        <h1>Học tiếng Trung<br>cùng Go</h1>
+        <p>Tra cứu hơn 120.000 từ, học theo lộ trình HSK 1–6, luyện flashcard và kiểm tra.</p>
+        <button class="btn-main" id="btn-go">Bắt đầu học →</button>
+      </section>
+
+      <section class="hsk-grid" id="hsk-grid">
+        <!-- rendered by JS -->
+      </section>
+    </div>
+
+    <!-- LEARN -->
+    <div id="view-learn" class="view hidden">
+      <div class="view-bar">
+        <button class="btn-back" id="learn-back">← Quay lại</button>
+        <h2 id="learn-title">HSK 1</h2>
+        <span class="muted" id="learn-info"></span>
+      </div>
+
+      <div class="learn-toolbar">
+        <div class="pill" id="learn-progress">0 / 0</div>
+      </div>
+
+      <div class="word-list" id="word-list"></div>
+      <div class="pagination" id="learn-pagination"></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div id="view-search" class="view hidden">
+      <div class="search-area">
+        <input type="search" id="search-input" class="search-input"
+          placeholder="Nhập chữ Hán, pinyin, tiếng Anh hoặc tiếng Việt...">
+      </div>
+      <div class="word-list" id="search-results">
+        <p class="muted center">Nhập từ khóa để tìm kiếm trong từ điển.</p>
+      </div>
+    </div>
+
+    <!-- FLASHCARD -->
+    <div id="view-flashcard" class="view hidden">
+      <div class="view-bar">
+        <button class="btn-back" id="fc-back">← Quay lại</button>
+        <h2>Flashcard</h2>
+        <select id="fc-level" class="sel">
+          <option value="1">HSK 1</option>
+          <option value="2">HSK 2</option>
+          <option value="3">HSK 3</option>
+          <option value="4">HSK 4</option>
+          <option value="5">HSK 5</option>
+          <option value="6">HSK 6</option>
+        </select>
+      </div>
+
+      <div class="fc-stage">
+        <div class="fc-count"><span id="fc-idx">1</span> / <span id="fc-total">0</span></div>
+        <div class="card" id="card" tabindex="0">
+          <div class="card-front">
+            <div class="card-char" id="card-char">–</div>
+            <div class="card-hint">nhấn để lật</div>
+          </div>
+          <div class="card-back">
+            <div class="card-back-char" id="cb-char"></div>
+            <div class="card-back-pinyin" id="cb-pinyin"></div>
+            <div class="card-back-vi" id="cb-vi"></div>
+            <div class="card-back-en" id="cb-en"></div>
+          </div>
+        </div>
+        <div class="fc-btns">
+          <button class="btn-icon" id="fc-prev" title="Trước">‹</button>
+          <button class="btn-s btn-red" id="fc-hard">Khó</button>
+          <button class="btn-s btn-green" id="fc-easy">Dễ ✓</button>
+          <button class="btn-icon" id="fc-next" title="Tiếp">›</button>
+        </div>
+        <button class="btn-ghost-sm" id="fc-shuffle">🔀 Trộn bài</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="view-quiz" class="view hidden">
+      <div class="view-bar">
+        <button class="btn-back" id="quiz-back">← Quay lại</button>
+        <h2>Kiểm tra</h2>
+      </div>
+
+      <!-- setup -->
+      <div id="quiz-setup" class="quiz-setup">
+        <label>Cấp độ
+          <select id="quiz-level" class="sel">
+            <option value="1">HSK 1</option>
+            <option value="2">HSK 2</option>
+            <option value="3">HSK 3</option>
+            <option value="4">HSK 4</option>
+            <option value="5">HSK 5</option>
+            <option value="6">HSK 6</option>
+          </select>
+        </label>
+        <label>Số câu
+          <select id="quiz-count" class="sel">
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+        </label>
+        <button class="btn-main" id="quiz-start">Bắt đầu →</button>
+      </div>
+
+      <!-- play -->
+      <div id="quiz-play" class="hidden">
+        <div class="quiz-bar">
+          <div class="qbar-track">
+            <div class="qbar-fill" id="qbar-fill"></div>
+          </div>
+          <span id="q-progress">1/10</span>
+          <span class="q-score-g" id="q-right">✓ 0</span>
+          <span class="q-score-r" id="q-wrong">✗ 0</span>
+          <span class="q-timer" id="q-timer">15s</span>
+        </div>
+        <div class="q-card">
+          <div class="q-label" id="q-label">Nghĩa của từ:</div>
+          <div class="q-word" id="q-word"></div>
+          <div class="q-sub" id="q-sub"></div>
+        </div>
+        <div class="q-opts" id="q-opts"></div>
+        <div class="q-fb hidden" id="q-fb">
+          <p id="q-fb-text"></p>
+          <button class="btn-main" id="q-next">Tiếp theo →</button>
+        </div>
+      </div>
+
+      <!-- result -->
+      <div id="quiz-result" class="hidden quiz-result">
+        <h3 id="qr-title">Kết quả</h3>
+        <div class="qr-score" id="qr-score">0%</div>
+        <p class="muted" id="qr-detail"></p>
+        <button class="btn-main" id="qr-again">Làm lại</button>
+      </div>
+    </div>
+
+    <!-- TYPING -->
+    <div id="view-type" class="view hidden">
+      <div class="view-bar">
+        <button class="btn-back" id="type-back">← Quay lại</button>
+        <h2>Luyện gõ tiếng Trung</h2>
+      </div>
+
+      <!-- setup -->
+      <div id="type-setup" class="quiz-setup">
+        <label>Cấp độ
+          <select id="type-level" class="sel">
+            <option value="1">HSK 1</option>
+            <option value="2">HSK 2</option>
+            <option value="3">HSK 3</option>
+            <option value="4">HSK 4</option>
+            <option value="5">HSK 5</option>
+            <option value="6">HSK 6</option>
+          </select>
+        </label>
+        <label>Số từ luyện gõ
+          <select id="type-count" class="sel">
+            <option value="10">10 từ</option>
+            <option value="20">20 từ</option>
+            <option value="50">50 từ</option>
+          </select>
+        </label>
+        <button class="btn-main" id="type-start">Bắt đầu gõ →</button>
+      </div>
+
+      <!-- play -->
+      <div id="type-play" class="hidden">
+        <div class="quiz-bar">
+          <span id="type-progress">1/10</span>
+          <span class="q-score-g" id="type-right">✓ 0</span>
+        </div>
+        <div class="type-stage"
+          style="text-align:center; padding: 40px 20px; background:var(--bg-card); border-radius:12px; margin-top:20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+          <div class="q-word" id="type-word" style="font-size: 4rem; color: var(--zh-color); margin-bottom: 10px;">
+          </div>
+          <div class="q-sub" id="type-pinyin"
+            style="font-size: 1.5rem; color: var(--muted); margin-bottom: 5px; visibility: hidden;">
+          </div>
+          <div class="q-sub" id="type-vi" style="font-size: 1.2rem; margin-bottom: 30px; visibility: hidden;"></div>
+
+          <div style="margin-bottom: 20px;">
+            <button id="btn-type-hint" class="btn-ghost-sm">💡 Hiện gợi ý</button>
+          </div>
+
+          <input type="text" id="type-input" placeholder="Gõ chữ Hán hoặc Pinyin..."
+            style="font-size: 2rem; padding: 10px; width: 80%; max-width: 400px; text-align: center; border: 2px solid #ccc; border-radius: 8px;">
+        </div>
+      </div>
+
+      <!-- result -->
+      <div id="type-result" class="hidden quiz-result">
+        <h3>Hoàn thành bài gõ!</h3>
+        <p class="muted" id="type-detail"></p>
+        <button class="btn-main" id="type-again">Tập gõ lại</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Từ điển: <a href="https://cc-cedict.org" target="_blank">CC-CEDICT</a> (CC BY-SA 3.0) · 汉语Go</p>
+  </footer>
+
+  <!-- MODAL -->
+  <div class="modal-bg hidden" id="modal">
+    <div class="modal-content">
+      <button class="modal-x" id="modal-x">×</button>
+      <div class="m-char" id="m-char"></div>
+      <div id="m-writer" style="width: 150px; height: 150px; margin: 0 auto; display: none;"></div>
+      <div class="writer-controls" style="text-align: center; margin-top: 10px; display: none;" id="m-writer-ctrl">
+        <button id="btn-draw" class="btn-ghost-sm">▶ Dạy viết</button>
+        <button id="btn-practice" class="btn-ghost-sm">✍️ Tự viết</button>
+      </div>
+      <br>
+      <div class="m-trad" id="m-trad"></div>
+      <div class="m-pinyin" id="m-pinyin"></div>
+      <div class="m-vi" id="m-vi"></div>
+      <div class="m-en" id="m-en"></div>
+      <div class="m-hsk" id="m-hsk"></div>
+      <div style="margin-top: 15px; text-align: center;">
+        <button id="btn-save-word" class="btn-main">💾 Lưu từ vựng</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
+  <script src="./script.js"></script>
+</body>
+
+</html>

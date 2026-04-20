@@ -14,7 +14,7 @@ from slowapi.errors import RateLimitExceeded
 # Load environment variables
 load_dotenv()
 
-from .cedict_parser import cedict
+from app.cedict_parser import cedict
 from .database import engine, Base, get_db
 from . import models
 from sqlalchemy import func

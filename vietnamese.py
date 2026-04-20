@@ -10,7 +10,7 @@ from pathlib import Path
 
 CACHE_FILE = Path(__file__).parent.parent / "data" / "viet_cache.json"
 
-from .viet_dict import VI
+from viet_dict import VI
 
 # In-memory cache
 _cache: dict[str, str] = {}

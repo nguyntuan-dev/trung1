@@ -21,11 +21,14 @@ from cedict_parser import cedict
 from database import engine, Base, get_db
 import models
 
-# Tạo các bảng trong database (nếu chưa có)
-models.Base.metadata.create_all(bind=engine)
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Tạo các bảng trong database (nếu chưa có)
+    try:
+        models.Base.metadata.create_all(bind=engine)
+        print("✅ Database tables ready")
+    except Exception as e:
+        print(f"❌ Lỗi tạo bảng: {e}")
     cedict.load()
     yield
 
